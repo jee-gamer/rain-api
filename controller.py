@@ -105,20 +105,18 @@ def get_basin_monthly_average(basin_id):
 def get_basin_all_annual_rainfall(basin_id):
     with pool.connection() as conn, conn.cursor() as cs:
         cs.execute("""
-            SELECT year
-            FROM (
-                SELECT r.year
-                FROM rainfall r
-                INNER JOIN station s ON r.station_id=s.station_id
-                INNER JOIN basin b ON b.basin_id=s.basin_id
-                WHERE b.basin_id=%s
-                GROUP BY r.year
-            )
+            SELECT r.year as year, SUM(r.amount) as amount
+            FROM rainfall r
+            INNER JOIN station s ON r.station_id=s.station_id
+            WHERE s.basin_id=%s
+            GROUP BY r.year
         """, [basin_id])
-        result = cs.fetchone()
-        print(result)
-    if result and result[0]:
-        amount = round(result[0], 2)
-        return amount
-    else:
-        abort(404)
+        result = [
+            models.AnnualRainfall(year, amount)
+            for year, amount in cs.fetchall()
+        ]
+
+        if(result):
+            return result
+        else:
+            abort(404)

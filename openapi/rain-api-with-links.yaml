@@ -149,7 +149,9 @@ paths:
           content:
             application/json:
               schema:
-                type: number
+                type: array
+                items:
+                  $ref: '#/components/schemas/AnnualRainfall'
 
 components:
   schemas:
