@@ -47,6 +47,10 @@ paths:
               operationId: controller.get_basin_annual_rainfall
               parameters:
                 basinId: $response.body#/basinId
+            avgMonthlyRainfalls:
+              operationId: controller.get_basin_monthly_average
+              parameters:
+                basinId: $response.body#/basinId
   /stationsInBasin/{basinId}:
     parameters:
     - name: basinId
@@ -129,6 +133,23 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/MonthlyAverage'
+  /basins/{basinId}/allAnnualRainfalls:
+    parameters:
+      - name: basinId
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Returns all annual rainfall for the specified basin in the specified year
+      operationId: controller.get_basin_all_annual_rainfall
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: number
 
 components:
   schemas:
